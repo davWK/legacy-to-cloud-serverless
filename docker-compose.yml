@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  db:
+    image: mongo:4.4.14
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  web:
+    build: .
+    container_name: "myflaskapp"
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://db:27017
+    depends_on:
+      - db
+
+volumes:
+  mongo-data:

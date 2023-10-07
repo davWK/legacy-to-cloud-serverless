@@ -1,0 +1,88 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  /* Header styles */
+  h1 {
+    color: #333;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  /* Form styles */
+  form {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  form input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  form button[type="submit"] {
+    display: block;
+    margin: 20px auto 0;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Todo styles */
+  .todo {
+    padding: 20px;
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .todo p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .todo i {
+    font-style: italic;
+    color: #999;
+    font-size: 16px;
+  }
+  
+  .todo form {
+    margin-top: 10px;
+  }
+  
+  .todo form input[type="submit"] {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
