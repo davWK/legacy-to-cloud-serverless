@@ -1,4 +1,4 @@
-# legacy-to-cloud-serverless
+# Legacy to cloud serverless
 > Repository files for [a comprehensive walkthrough for transitioning/migrating a legacy app from on-premises to the cloud, emphasizing modernization and serverless platforms, with integrated DevOps practices.](link)
 
 ## Summary
