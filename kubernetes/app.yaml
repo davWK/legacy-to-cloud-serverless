@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: legacy-to-cloud-deployment
+  labels:
+    app: legacy-to-cloud
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: legacy-to-cloud
+  template:
+    metadata:
+      labels:
+        app: legacy-to-cloud
+    spec:
+      containers:
+      - name: legacy-to-cloud
+        image: alilikpo/legacy-to-cloud:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: mongo-uri
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: legacy-to-cloud-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: legacy-to-cloud
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
