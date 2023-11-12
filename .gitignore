@@ -4,3 +4,4 @@ __pycache__/
 .dockerignore
 venv/
 my-note
+docker/.env

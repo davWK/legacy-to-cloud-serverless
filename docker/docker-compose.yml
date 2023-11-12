@@ -7,6 +7,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      - my-flask-app
 
   web:
     build: .
@@ -17,6 +19,11 @@ services:
       - MONGO_URI=mongodb://db:27017
     depends_on:
       - db
+    networks:
+      - my-flask-app
 
 volumes:
   mongo-data:
+
+networks:
+  my-flask-app: {}
