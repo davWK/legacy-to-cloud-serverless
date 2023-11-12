@@ -3,7 +3,6 @@
 
 ## Summary
 * [Technologies ](#technologies)
-* [Architecture](#architecture)
 * [Setup](#setup)
 * [Project Status](#project-status)
 * [Room for Improvement](#room-for-improvement)
@@ -11,13 +10,17 @@
 <!-- * [License](#license) -->
 
 ## Technologies
-- 
 - Python (Flask)
 - Docker
 - Mongodb
+- Kubernetes
+- Google Cloud
+- Cloud Build
+- Firestore
+- Cloud Run
 
 ## Setup
-Read this [serie of articles](link) for the set up.
+Read this [serie of articles](https://davidwoglo.hashnode.dev/series/legacy-to-serverless) for the set up.
 
 ## Project Status
 Project is: _in progess_ .
