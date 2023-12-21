@@ -2,14 +2,18 @@ import os
 from flask import Flask
 from pymongo import MongoClient
 from flask import Flask, render_template, request, url_for, redirect
-from pymongo import MongoClient
 from bson.objectid import ObjectId
+import mongomock
 
 
 
 app = Flask(__name__, template_folder='templates')
 
-client = MongoClient(os.environ['MONGO_URI'])
+if os.environ.get('TESTING'):
+    client = mongomock.MongoClient()
+else:
+    client = MongoClient(os.environ['MONGO_URI'])
+
 
 db = client.flask_db
 todos = db.todos
