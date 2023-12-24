@@ -13,16 +13,7 @@ steps:
       pip install --user -r docker/requirements-test.txt
   id: 'install-test-dependencies'
 
-# Step 1: Check if pymongo is installed
-- name: 'python:3.10-slim'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      python -c "import pymongo"
-  id: 'check-pymongo'
-
-# Step 2: Run unit tests
+# Step 1: Run unit tests
 - name: 'python:3.10-slim'
   entrypoint: '/bin/bash'
   args:
@@ -33,10 +24,20 @@ steps:
       python -m unittest test.py
   id: 'run-tests'
 
-# Step 3: Build the Docker image
+# Step 2: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
   id: 'build-image'
+
+# Step 3: Inspect the Docker image and write the digest to a file
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args:
+    - '-c'
+    - |
+      docker image inspect $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA --format '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
+      cat /workspace/image-digest.txt
+  id: 'inspect-image'
 
 # Step 4: Push the Docker image to Google Cloud Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
