@@ -1,4 +1,13 @@
 steps:
+# Step 0: Install test dependencies
+- name: 'python:3.10-slim'
+  entrypoint: '/bin/bash'
+  args:
+    - '-c'
+    - |
+      pip install -r docker/requirements-test.txt
+  id: 'install-test-dependencies'
+
 # Step 1: Run unit tests
 - name: 'python:3.10-slim'
   entrypoint: '/bin/bash'
@@ -11,7 +20,7 @@ steps:
 
 # Step 2: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-image:latest', 'docker/']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest', 'docker/']
   id: 'build-image'
 
 # Step 3: Push the Docker image to Google Cloud Artifact Registry
