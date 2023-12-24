@@ -1,0 +1,23 @@
+steps:
+# Step 1: Run unit tests
+- name: 'python:3.10-slim'
+  entrypoint: '/bin/bash'
+  args:
+    - '-c'
+    - |
+      export TESTING=True
+      python -m unittest docker/test.py
+  id: 'run-tests'
+
+# Step 2: Build the Docker image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-image:latest', 'docker/']
+  id: 'build-image'
+
+# Step 3: Push the Docker image to Google Cloud Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest']
+  id: 'push-image'
+
+images:
+- 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest'
