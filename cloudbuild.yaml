@@ -5,7 +5,7 @@ steps:
   args:
     - '-c'
     - |
-      pip install -r docker/requirements-test.txt
+      pip install --user -r docker/requirements-test.txt
   id: 'install-test-dependencies'
 
 # Step 1: Check if pymongo is installed
