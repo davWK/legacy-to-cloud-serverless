@@ -30,13 +30,13 @@ steps:
 
 # Step 3: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-image:latest', 'docker/']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest', 'docker/']
   id: 'build-image'
 
 # Step 4: Push the Docker image to Google Cloud Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/my-image:latest']
+  args: ['push', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest']
   id: 'push-image'
 
 images:
-- 'gcr.io/$PROJECT_ID/my-image:latest'
+- 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest'
