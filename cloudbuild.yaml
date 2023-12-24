@@ -31,7 +31,7 @@ steps:
   waitFor: ['run-tests']
   id: 'build-image'
 
-# Step 3: Inspect the Docker image and write the digest to a file
+# Step 3: Inspect the Docker image and write the digest to a file.
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: '/bin/bash'
   args:
