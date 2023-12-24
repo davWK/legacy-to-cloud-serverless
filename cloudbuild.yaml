@@ -1,3 +1,8 @@
+substitutions:
+  _REGION: us-central1
+  _REPOSITORY: from-legacy-to-cloud
+  _IMAGE: from-legacy-to-cloud
+
 steps:
 # Step 0: Install test dependencies
 - name: 'python:3.10-slim'
@@ -30,13 +35,13 @@ steps:
 
 # Step 3: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest', 'docker/']
+  args: ['build', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
   id: 'build-image'
 
 # Step 4: Push the Docker image to Google Cloud Artifact Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest']
+  args: ['push', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA']
   id: 'push-image'
 
 images:
-- 'gcr.io/$PROJECT_ID/from-legacy-to-cloud:latest'
+- '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
