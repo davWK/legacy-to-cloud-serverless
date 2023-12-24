@@ -24,7 +24,8 @@ steps:
     - '-c'
     - |
       export TESTING=True
-      python -m unittest docker/test.py
+      cd docker 
+      python -m unittest test.py
   id: 'run-tests'
 
 # Step 3: Build the Docker image
