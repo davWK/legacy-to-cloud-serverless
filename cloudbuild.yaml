@@ -2,7 +2,7 @@ substitutions:
   _REGION: us-central1
   _REPOSITORY: from-legacy-to-cloud
   _IMAGE: from-legacy-to-cloud
-  _SEVERITY: 'NONE' 
+  _SEVERITY: '"CRITICAL|HIGH"'
 
 steps:
 # Step 0: Install test dependencies
