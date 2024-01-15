@@ -2,7 +2,7 @@ substitutions:
   _REGION: us-central1
   _REPOSITORY: from-legacy-to-cloud
   _IMAGE: from-legacy-to-cloud
-  _SEVERITY: '"CRITICAL|HIGH"'
+  _SEVERITY: ''
   _SERVICE_NAME: from-legacy-to-cloud
 
 steps:
