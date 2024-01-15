@@ -72,16 +72,17 @@ steps:
 # Step 7: Deploy the Docker image to Cloud Run
 - id: 'deploy-image'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
   args:
-  - run
-  - deploy
-  - $_SERVICE_NAME
-  - --image
-  - $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA
-  - --region
-  - $_REGION
-  - --platform
-  - managed
+  - 'run'
+  - 'deploy'
+  - '$_SERVICE_NAME'
+  - '--image'
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+  - '--region'
+  - '$_REGION'
+  - '--platform'
+  - 'managed'
   waitFor: ['push-image']
 
 images:
