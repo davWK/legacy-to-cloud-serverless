@@ -72,7 +72,7 @@ steps:
 # Step 7: Deploy the Docker image to Cloud Run
 - id: 'deploy-image'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: 'gcloud'
+  entrypoint: gcloud
   args:
   - 'run'
   - 'deploy'

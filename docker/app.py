@@ -4,34 +4,30 @@ from pymongo import MongoClient
 from flask import Flask, render_template, request, url_for, redirect
 from bson.objectid import ObjectId
 import mongomock
-
-
+from flask import Flask, render_template, request, url_for, redirect
+from google.cloud import firestore
 
 app = Flask(__name__, template_folder='templates')
 
-if os.environ.get('TESTING'):
-    client = mongomock.MongoClient()
-else:
-    client = MongoClient(os.environ['MONGO_URI'])
+db = firestore.Client()
 
-
-db = client.flask_db
-todos = db.todos
-
+todos = db.collection('todos')
 
 @app.route('/', methods=('GET', 'POST'))
 def index():
     if request.method=='POST':
         content = request.form['content']
         degree = request.form['degree']
-        todos.insert_one({'content': content, 'degree': degree})
+        todos.add({'content': content, 'degree': degree})
         return redirect(url_for('index'))
 
-    all_todos = todos.find()
+    all_todos = todos.stream()
     return render_template('index.html', todos=all_todos)
-
 
 @app.post('/<id>/delete/')
 def delete(id):
-    todos.delete_one({"_id": ObjectId(id)})
+    todos.document(id).delete()
     return redirect(url_for('index'))
+
+if __name__ == "__main__":
+    app.run(debug=True)

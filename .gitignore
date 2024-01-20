@@ -5,3 +5,4 @@ __pycache__/
 venv/
 my-note
 docker/.env
+cred/cred.json
