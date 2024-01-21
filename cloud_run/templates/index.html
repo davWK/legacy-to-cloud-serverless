@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+    <style>
+        .todo {
+            padding: 20px;
+            margin: 10px;
+            background-color: #eee;
+        }
+
+        /* Add these styles to align the radio buttons horizontally */
+        .radio-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .radio-group label {
+            margin-right: 20px;
+        }
+
+        /* Add these styles to move the "Degree" label to a separate line */
+        .degree-label {
+            margin-bottom: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>FlaskTODO</h1>
+    <hr>
+    <div class="content">
+    <form method="post">
+        <p>
+            <b><label for="content">Todo content</label></b>
+        </p>
+        <p>
+            <input type="text" name="content"
+                placeholder="Todo Content"></input>
+        </p>
+
+        <!-- Wrap the radio buttons in a div and apply the radio-group class -->
+        <div class="radio-group">
+            <p class="degree-label">
+                <b><label for="degree">Degree</label></b>
+            </p>
+            <p>
+                <label for="degree-0">
+                    Important
+                    <input id="degree-0" name="degree" required type="radio" value="Important">
+                </label>
+            </p>
+            <p>
+                <label for="degree-1">
+                    Unimportant
+                    <input id="degree-1" name="degree" required type="radio" value="Unimportant">
+                </label>
+            </p>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+    {% for todo in todos %}
+    <div class="todo">
+        <p>{{ todo['content'] }} <i>({{ todo['degree']}})</i></p>
+        <form method="POST" action="{{ url_for('delete', id=todo['_id']) }}" >
+            <input type="submit" value="Delete Todo"
+                   onclick="return confirm('Are you sure you want to delete this entry?')">
+        </form>
+    </div>
+{% endfor %}
+
+    </div>
+</body>
+</html>

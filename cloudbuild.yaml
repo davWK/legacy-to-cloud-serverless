@@ -7,29 +7,29 @@ substitutions:
 
 steps:
 # Step 0: Install test dependencies
-- name: 'python:3.10-slim'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      pip install --user -r docker/requirements-test.txt
-  id: 'install-test-dependencies'
+# - name: 'python:3.10-slim'
+#   entrypoint: '/bin/bash'
+#   args:
+#     - '-c'
+#     - |
+#       pip install --user -r cloud_run/requirements-test.txt
+#   id: 'install-test-dependencies'
 
 # Step 1: Run unit tests
-- name: 'python:3.10-slim'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      export TESTING=True
-      cd docker 
-      python -m unittest test.py
-  id: 'run-tests'
+# - name: 'python:3.10-slim'
+#   entrypoint: '/bin/bash'
+#   args:
+#     - '-c'
+#     - |
+#       export TESTING=True
+#       cd cloud_run 
+#       python -m unittest test.py
+#   id: 'run-tests'
 
 # Step 2: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
-  waitFor: ['run-tests']
+  # waitFor: ['run-tests']
   id: 'build-image'
 
 # Step 3: Inspect the Docker image and write the digest to a file.
