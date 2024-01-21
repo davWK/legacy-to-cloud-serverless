@@ -37,6 +37,11 @@ steps:
   args: ['run', '--rm', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'cat', '/app/app.py']
   id: 'print-app-py'
 
+# Step 3.1: Print the latest commit hash
+- name: 'gcr.io/cloud-builders/git'
+  args: ['rev-parse', 'HEAD']
+  id: 'print-latest-commit'
+
 # Step 4: Print the list of installed Python packages
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '--rm', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'pip', 'freeze']
