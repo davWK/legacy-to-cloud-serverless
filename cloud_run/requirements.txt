@@ -1,2 +1,4 @@
 Flask
-pymongo
+gunicorn
+google-cloud-firestore
+google-auth
