@@ -28,7 +28,7 @@ steps:
 
 # Step 2: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
+  args: ['build', '--no-cache', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
   # waitFor: ['run-tests']
   id: 'build-image'
 
