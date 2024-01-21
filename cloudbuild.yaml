@@ -84,6 +84,7 @@ steps:
   - '$_REGION'
   - '--platform'
   - 'managed'
+  - '--allow-unauthenticated'
   waitFor: ['push-image']
 
 images:
