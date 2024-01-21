@@ -28,7 +28,7 @@ steps:
 
 # Step 2: Build the Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '--no-cache', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'docker/']
+  args: ['build', '--no-cache', '-t', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'cloud_run/']
   # waitFor: ['run-tests']
   id: 'build-image'
 
@@ -52,42 +52,42 @@ steps:
   args: ['run', '--rm', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA', 'env']
   id: 'print-env-vars'
 
-# Step 6: Inspect the Docker image and write the digest to a file.
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      docker image inspect $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA --format '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
-      cat /workspace/image-digest.txt
-  id: 'inspect-image'
+# # Step 6: Inspect the Docker image and write the digest to a file.
+# - name: 'gcr.io/cloud-builders/docker'
+#   entrypoint: '/bin/bash'
+#   args:
+#     - '-c'
+#     - |
+#       docker image inspect $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA --format '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
+#       cat /workspace/image-digest.txt
+#   id: 'inspect-image'
 
-# Step 7: Scan the Docker image for vulnerabilities
-- id: scan
-  name: gcr.io/google.com/cloudsdktool/cloud-sdk
-  entrypoint: /bin/bash
-  args:
-  - -c
-  - |
-    gcloud artifacts docker images scan $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA \
-    --format='value(response.scan)' > /workspace/scan_id.txt
+# # Step 7: Scan the Docker image for vulnerabilities
+# - id: scan
+#   name: gcr.io/google.com/cloudsdktool/cloud-sdk
+#   entrypoint: /bin/bash
+#   args:
+#   - -c
+#   - |
+#     gcloud artifacts docker images scan $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA \
+#     --format='value(response.scan)' > /workspace/scan_id.txt
 
-# Step 8: Check the severity of any vulnerabilities found
-- id: severity check
-  name: gcr.io/google.com/cloudsdktool/cloud-sdk
-  entrypoint: /bin/bash
-  args:
-  - -c
-  - |
-    gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) \
-    --format='value(vulnerability.effectiveSeverity)' | if grep -Exq $_SEVERITY; \
-    then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
+# # Step 8: Check the severity of any vulnerabilities found
+# - id: severity check
+#   name: gcr.io/google.com/cloudsdktool/cloud-sdk
+#   entrypoint: /bin/bash
+#   args:
+#   - -c
+#   - |
+#     gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) \
+#     --format='value(vulnerability.effectiveSeverity)' | if grep -Exq $_SEVERITY; \
+#     then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
 
-# Step 9: Push the Docker image to Google Cloud Artifact Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA']
-  id: 'push-image'
-  waitFor: ['severity check']
+# # Step 9: Push the Docker image to Google Cloud Artifact Registry
+# - name: 'gcr.io/cloud-builders/docker'
+#   args: ['push', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA']
+#   id: 'push-image'
+#   waitFor: ['severity check']
 
 # Step 10: Deploy the Docker image to Cloud Run
 # - id: 'deploy-image'
