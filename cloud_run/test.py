@@ -6,26 +6,21 @@ class TestApp(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
 
-    @patch('app.db')
-    def test_index_post(self, mock_db):
-        mock_collection = MagicMock()
-        mock_db.collection.return_value = mock_collection
-
+    @patch('app.todos.add')
+    def test_index_post(self, mock_add):
         response = self.app.post('/', data={'content': 'Test Todo', 'degree': 'Test Degree'})
 
-        mock_collection.add.assert_called_once_with({'content': 'Test Todo', 'degree': 'Test Degree'})
+        mock_add.assert_called_once_with({'content': 'Test Todo', 'degree': 'Test Degree'})
         self.assertEqual(response.status_code, 302)
 
-    @patch('app.db')
-    def test_delete(self, mock_db):
-        mock_collection = MagicMock()
-        mock_document = MagicMock()
-        mock_collection.document.return_value = mock_document
-        mock_db.collection.return_value = mock_collection
+    @patch('app.todos.document')
+    def test_delete(self, mock_document):
+        mock_delete = MagicMock()
+        mock_document.return_value.delete = mock_delete
 
         response = self.app.post('/123/delete/')
 
-        mock_document.delete.assert_called_once()
+        mock_delete.assert_called_once()
         self.assertEqual(response.status_code, 302)
 
 if __name__ == '__main__':
