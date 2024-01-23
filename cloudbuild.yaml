@@ -6,7 +6,6 @@ substitutions:
   _SERVICE_NAME: from-legacy-to-cloud
 
 steps:
-#off GCP Test
 #Step 0: Install dependencies
 - name: 'python:3.10-slim'
   entrypoint: '/bin/bash'
@@ -16,6 +15,7 @@ steps:
       pip install --user -r cloud_run/requirements.txt
   id: 'install-dependencies'
 
+#off GCP Test
 # Step 1: Run unit tests
 # - name: 'python:3.10-slim'
 #   entrypoint: '/bin/bash'
@@ -44,59 +44,59 @@ steps:
   id: 'build-image'
 
 
-# # Step 3: Inspect the Docker image and write the digest to a file.
-# - name: 'gcr.io/cloud-builders/docker'
-#   entrypoint: '/bin/bash'
-#   args:
-#     - '-c'
-#     - |
-#       docker image inspect $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA --format '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
-#       cat /workspace/image-digest.txt
-#   id: 'inspect-image'
+# Step 3: Inspect the Docker image and write the digest to a file.
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: '/bin/bash'
+  args:
+    - '-c'
+    - |
+      docker image inspect $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA --format '{{index .RepoTags 0}}@{{.Id}}' > /workspace/image-digest.txt &&
+      cat /workspace/image-digest.txt
+  id: 'inspect-image'
 
-# # Step 4: Scan the Docker image for vulnerabilities
-# - id: scan
-#   name: gcr.io/google.com/cloudsdktool/cloud-sdk
-#   entrypoint: /bin/bash
-#   args:
-#   - -c
-#   - |
-#     gcloud artifacts docker images scan $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA \
-#     --format='value(response.scan)' > /workspace/scan_id.txt
+# Step 4: Scan the Docker image for vulnerabilities
+- id: scan
+  name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: /bin/bash
+  args:
+  - -c
+  - |
+    gcloud artifacts docker images scan $_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA \
+    --format='value(response.scan)' > /workspace/scan_id.txt
 
-# # Step 5: Check the severity of any vulnerabilities found
-# - id: severity check
-#   name: gcr.io/google.com/cloudsdktool/cloud-sdk
-#   entrypoint: /bin/bash
-#   args:
-#   - -c
-#   - |
-#     gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) \
-#     --format='value(vulnerability.effectiveSeverity)' | if grep -Exq $_SEVERITY; \
-#     then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
+# Step 5: Check the severity of any vulnerabilities found
+- id: severity check
+  name: gcr.io/google.com/cloudsdktool/cloud-sdk
+  entrypoint: /bin/bash
+  args:
+  - -c
+  - |
+    gcloud artifacts docker images list-vulnerabilities $(cat /workspace/scan_id.txt) \
+    --format='value(vulnerability.effectiveSeverity)' | if grep -Exq $_SEVERITY; \
+    then echo 'Failed vulnerability check' && exit 1; else exit 0; fi
 
-# # Step 6: Push the Docker image to Google Cloud Artifact Registry
-# - name: 'gcr.io/cloud-builders/docker'
-#   args: ['push', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA']
-#   id: 'push-image'
-#   waitFor: ['severity check']
+# Step 6: Push the Docker image to Google Cloud Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA']
+  id: 'push-image'
+  waitFor: ['severity check']
 
-# #Step 7: Deploy the Docker image to Cloud Run
-# - id: 'deploy-image'
-#   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#   entrypoint: 'gcloud'
-#   args:
-#   - 'run'
-#   - 'deploy'
-#   - '$_SERVICE_NAME'
-#   - '--image'
-#   - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
-#   - '--region'
-#   - '$_REGION'
-#   - '--platform'
-#   - 'managed'
-#   - '--allow-unauthenticated'
-#   waitFor: ['push-image']
+#Step 7: Deploy the Docker image to Cloud Run
+- id: 'deploy-image'
+  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - '$_SERVICE_NAME'
+  - '--image'
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+  - '--region'
+  - '$_REGION'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+  waitFor: ['push-image']
 
 images:
 - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
