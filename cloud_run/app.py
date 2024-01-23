@@ -13,15 +13,15 @@ db = firestore.Client(credentials=credentials)
 
 todos = db.collection('todos')
 
-@app.route('/', methods=('GET', 'POST'))
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method=='POST':
-        content = request.form['content']
-        degree = request.form['degree']
+    if request.method == 'POST':
+        content = request.form.get('content')
+        degree = request.form.get('degree')
         todos.add({'content': content, 'degree': degree})
         return redirect(url_for('index'))
 
-    all_todos = [doc.to_dict() for doc in todos.stream()]
+    all_todos = [{'_id': doc.id, **doc.to_dict()} for doc in todos.stream()]
     return render_template('index.html', todos=all_todos)
 
 @app.route('/<id>/delete/', methods=['POST'])
