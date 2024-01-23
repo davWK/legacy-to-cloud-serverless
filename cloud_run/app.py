@@ -21,10 +21,10 @@ def index():
         todos.add({'content': content, 'degree': degree})
         return redirect(url_for('index'))
 
-    all_todos = todos.stream()
+    all_todos = [doc.to_dict() for doc in todos.stream()]
     return render_template('index.html', todos=all_todos)
 
-@app.post('/<id>/delete/')
+@app.route('/<id>/delete/', methods=['POST'])
 def delete(id):
     todos.document(id).delete()
     return redirect(url_for('index'))
