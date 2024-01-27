@@ -4,6 +4,12 @@ substitutions:
   _IMAGE: from-legacy-to-cloud
   _SEVERITY: ''
   _SERVICE_NAME: from-legacy-to-cloud
+  _KEY_VERSION: 1
+  _KEY_LOCATION: global
+  _KEYRING_NAME: fltc-keyring
+  _KEY_NAME: fltc-attestation
+  _ATTESTOR_NAME: fltc-attestor
+
 
 steps:
 #Step 0: Install dependencies
@@ -81,7 +87,28 @@ steps:
   id: 'push-image'
   waitFor: ['severity check']
 
-#Step 7: Deploy the Docker image to Cloud Run
+# Step 7: Create an attestation for the Docker image
+- id: 'create-attestation'
+  name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
+  args:
+    - '--artifact-url'
+    - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+    - '--attestor'
+    - '$_ATTESTOR_NAME'
+    - '--attestor-project'
+    - '${PROJECT_ID}'
+    - '--keyversion'
+    - '$_KEY_VERSION'
+    - '--keyversion-project'
+    - '${PROJECT_ID}'
+    - '--keyversion-location'
+    - '$_KEY_LOCATION'
+    - '--keyversion-keyring'
+    - '$_KEYRING_NAME'
+    - '--keyversion-key'
+    - '$_KEY_NAME'
+
+#Step 8: Deploy the Docker image to Cloud Run
 - id: 'deploy-image'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'gcloud'
@@ -96,7 +123,7 @@ steps:
   - '--platform'
   - 'managed'
   - '--allow-unauthenticated'
-  waitFor: ['push-image']
+  waitFor: ['push-image', 'create-attestation']
 
 images:
 - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
