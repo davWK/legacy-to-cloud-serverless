@@ -4,7 +4,7 @@ substitutions:
   _IMAGE: from-legacy-to-cloud
   _SEVERITY: ''
   _SERVICE_NAME: from-legacy-to-cloud
-  _KEY_VERSION: 1
+  _KEY_VERSION: '1'
   _KEY_LOCATION: global
   _KEYRING_NAME: fltc-keyring
   _KEY_NAME: fltc-attestation
