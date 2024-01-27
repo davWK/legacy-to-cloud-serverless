@@ -87,7 +87,7 @@ steps:
   id: 'push-image'
   waitFor: ['severity check']
 
-# Step 7: Create an attestation for the image
+# Step 7: Create an attestation for the Docker image
 - id: 'create-attestation'
   name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
   args:
