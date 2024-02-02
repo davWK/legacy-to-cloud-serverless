@@ -108,7 +108,7 @@ steps:
     - '--keyversion-key'
     - '$_KEY_NAME'
 
-#Step 8: Deploy the Docker image to Cloud Run
+#Step 8: Deploy the image to Cloud Run
 - id: 'deploy-image'
   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'gcloud'
