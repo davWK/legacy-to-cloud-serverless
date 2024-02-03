@@ -108,22 +108,22 @@ steps:
 #     - '--keyversion-key'
 #     - '$_KEY_NAME'
 
-#Step 8: Deploy the image to Cloud Run
-- id: 'deploy-image'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: 'gcloud'
-  args:
-  - 'run'
-  - 'deploy'
-  - '$_SERVICE_NAME'
-  - '--image'
-  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
-  - '--region'
-  - '$_REGION'
-  - '--platform'
-  - 'managed'
-  - '--allow-unauthenticated'
-  waitFor: ['push-image']
+# #Step 8: Deploy the image to Cloud Run
+# - id: 'deploy-image'
+#   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: 'gcloud'
+#   args:
+#   - 'run'
+#   - 'deploy'
+#   - '$_SERVICE_NAME'
+#   - '--image'
+#   - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+#   - '--region'
+#   - '$_REGION'
+#   - '--platform'
+#   - 'managed'
+#   - '--allow-unauthenticated'
+#   waitFor: ['push-image']
 
 images:
 - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
