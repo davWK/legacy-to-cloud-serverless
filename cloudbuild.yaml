@@ -92,7 +92,7 @@ steps:
     - '-c'
     - |
       _ATTESTOR=$(gcloud beta container binauthz attestors list --format='value(name)' --filter='name:built-by-cloudbuild') &&
-      echo $ATTESTOR > /workspace/attestor.txt
+      echo $_ATTESTOR > /workspace/attestor.txt
 
 # Step 8: Update the Binary Authorization policy to include the attestor
 - id: 'update-policy'
@@ -104,7 +104,7 @@ steps:
       _ATTESTOR=$(cat /workspace/attestor.txt) &&
       POLICY=$(gcloud beta container binauthz policy describe --format=json) &&
       POLICY=$(echo $POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
-      POLICY=$(echo $POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$ATTESTOR'"]}') &&
+      POLICY=$(echo $POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$_ATTESTOR'"]}') &&
       echo $POLICY | gcloud beta container binauthz policy import --policy-file=-
 
 
