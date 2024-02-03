@@ -102,7 +102,6 @@ steps:
     - '-c'
     - |
       _ATTESTOR=$(cat /workspace/attestor.txt) &&
-      _POLICY=$(gcloud beta container binauthz policy describe --format=json) &&
       _POLICY=$(echo $_POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
       _POLICY=$(echo $_POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$_ATTESTOR'"]}') &&
       echo $_POLICY | gcloud beta container binauthz policy import --policy-file=-
