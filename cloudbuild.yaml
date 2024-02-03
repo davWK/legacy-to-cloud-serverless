@@ -101,7 +101,7 @@ steps:
   args:
     - '-c'
     - |
-      ATTESTOR=$(cat /workspace/attestor.txt) &&
+      _ATTESTOR=$(cat /workspace/attestor.txt) &&
       POLICY=$(gcloud beta container binauthz policy describe --format=json) &&
       POLICY=$(echo $POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
       POLICY=$(echo $POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$ATTESTOR'"]}') &&
