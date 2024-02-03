@@ -7,15 +7,13 @@ substitutions:
 
 
 steps:
-#Step 0: Install dependencies and the jq command-line JSON processor
+#Step 0: Install dependencies 
 - name: 'python:3.10-slim'
   entrypoint: '/bin/bash'
   args:
     - '-c'
     - |
       pip install --user -r cloud_run/requirements.txt
-      apt-get update &&
-      apt-get install -y jq
   id: 'install-dependencies'
 
 #off GCP Test
@@ -101,6 +99,8 @@ steps:
   args:
     - '-c'
     - |
+      apt-get update &&
+      apt-get install -y jq &&
       _ATTESTOR=$(cat /workspace/attestor.txt) &&
       _POLICY=$(echo $_POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
       _POLICY=$(echo $_POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$_ATTESTOR'"]}') &&
