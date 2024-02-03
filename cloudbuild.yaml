@@ -91,7 +91,7 @@ steps:
   args:
     - '-c'
     - |
-      ATTESTOR=$(gcloud beta container binauthz attestors list --format='value(name)' --filter='name:built-by-cloudbuild') &&
+      _ATTESTOR=$(gcloud beta container binauthz attestors list --format='value(name)' --filter='name:built-by-cloudbuild') &&
       echo $ATTESTOR > /workspace/attestor.txt
 
 # Step 8: Update the Binary Authorization policy to include the attestor
