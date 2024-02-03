@@ -82,68 +82,68 @@ steps:
   id: 'push-image'
   waitFor: ['severity check']
 
-# Step 7: Get the attestor created by Cloud Build
-- id: 'get-attestor'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      _ATTESTOR=$(gcloud beta container binauthz attestors list --format='value(name)' --filter='name:built-by-cloudbuild') &&
-      echo $_ATTESTOR > /workspace/attestor.txt
-
-# Step 8: Update the Binary Authorization policy to include the attestor
-- id: 'update-policy'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: '/bin/bash'
-  args:
-    - '-c'
-    - |
-      apt-get update &&
-      apt-get install -y jq &&
-      _ATTESTOR=$(cat /workspace/attestor.txt) &&
-      _POLICY=$(echo $_POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
-      _POLICY=$(echo $_POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$_ATTESTOR'"]}') &&
-      echo $_POLICY | gcloud beta container binauthz policy import --policy-file=-
-
-
-# # Step 7: Create an attestation for the Docker image
-# - id: 'create-attestation'
-#   name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
+# # Step 7: Get the attestor created by Cloud Build
+# - id: 'get-attestor'
+#   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: '/bin/bash'
 #   args:
-#     - '--artifact-url'
-#     - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
-#     - '--attestor'
-#     - '$_ATTESTOR_NAME'
-#     - '--attestor-project'
-#     - '${PROJECT_ID}'
-#     - '--keyversion'
-#     - '$_KEY_VERSION'
-#     - '--keyversion-project'
-#     - '${PROJECT_ID}'
-#     - '--keyversion-location'
-#     - '$_KEY_LOCATION'
-#     - '--keyversion-keyring'
-#     - '$_KEYRING_NAME'
-#     - '--keyversion-key'
-#     - '$_KEY_NAME'
+#     - '-c'
+#     - |
+#       _ATTESTOR=$(gcloud beta container binauthz attestors list --format='value(name)' --filter='name:built-by-cloudbuild') &&
+#       echo $_ATTESTOR > /workspace/attestor.txt
 
-#Step 8: Deploy the image to Cloud Run
-- id: 'deploy-image'
-  name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: 'gcloud'
-  args:
-  - 'run'
-  - 'deploy'
-  - '$_SERVICE_NAME'
-  - '--image'
-  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
-  - '--region'
-  - '$_REGION'
-  - '--platform'
-  - 'managed'
-  - '--allow-unauthenticated'
-  waitFor: ['push-image']
+# # Step 8: Update the Binary Authorization policy to include the attestor
+# - id: 'update-policy'
+#   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: '/bin/bash'
+#   args:
+#     - '-c'
+#     - |
+#       apt-get update &&
+#       apt-get install -y jq &&
+#       _ATTESTOR=$(cat /workspace/attestor.txt) &&
+#       _POLICY=$(echo $_POLICY | jq '.admissionWhitelistPatterns += [{"namePattern": "gcr.io/'$PROJECT_ID'/*"}]') &&
+#       _POLICY=$(echo $_POLICY | jq '.defaultAdmissionRule = {"evaluationMode": "REQUIRE_ATTESTATION", "requireAttestationsBy": ["projects/'$PROJECT_ID'/attestors/'$_ATTESTOR'"]}') &&
+#       echo $_POLICY | gcloud beta container binauthz policy import --policy-file=-
 
-images:
-- '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+
+# # # Step 7: Create an attestation for the Docker image
+# # - id: 'create-attestation'
+# #   name: 'gcr.io/${PROJECT_ID}/binauthz-attestation:latest'
+# #   args:
+# #     - '--artifact-url'
+# #     - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+# #     - '--attestor'
+# #     - '$_ATTESTOR_NAME'
+# #     - '--attestor-project'
+# #     - '${PROJECT_ID}'
+# #     - '--keyversion'
+# #     - '$_KEY_VERSION'
+# #     - '--keyversion-project'
+# #     - '${PROJECT_ID}'
+# #     - '--keyversion-location'
+# #     - '$_KEY_LOCATION'
+# #     - '--keyversion-keyring'
+# #     - '$_KEYRING_NAME'
+# #     - '--keyversion-key'
+# #     - '$_KEY_NAME'
+
+# #Step 8: Deploy the image to Cloud Run
+# - id: 'deploy-image'
+#   name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#   entrypoint: 'gcloud'
+#   args:
+#   - 'run'
+#   - 'deploy'
+#   - '$_SERVICE_NAME'
+#   - '--image'
+#   - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
+#   - '--region'
+#   - '$_REGION'
+#   - '--platform'
+#   - 'managed'
+#   - '--allow-unauthenticated'
+#   waitFor: ['push-image']
+
+# images:
+# - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$COMMIT_SHA'
