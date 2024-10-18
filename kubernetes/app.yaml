@@ -14,17 +14,33 @@ spec:
       labels:
         app: legacy-to-cloud
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: legacy-to-cloud
         image: alilikpo/legacy-to-cloud:latest
         ports:
         - containerPort: 5000
-        env:
-        - name: MONGO_URI
-          valueFrom:
-            secretKeyRef:
-              name: app-secret
-              key: mongo-uri
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          env:
+          - name: MONGO_URI
+            valueFrom:
+              secretKeyRef:
+                name: app-secret
+                key: mongo-uri
+          volumeMounts:
+          - mountPath: /data
+            name: storage
+  
+        volumes:
+        - name: storage
+          emptyDir:
+            sizeLimit: "1Gi"
 
 ---
 apiVersion: v1
